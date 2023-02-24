@@ -28,11 +28,33 @@ function App() {
   const [rangeValue, setRangeValue] = useState([0, 0])
   const [singleValue, setSingleValue] = useState(0)
   const [loopMode, setLoopMode] = useState('false')
-  const [position, setPosition] = useState('0')
+  const [position, setPosition] = useState('00:00:00')
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
     return pb_rates[pbr.toString()]
+
+  }
+
+  function formatTime(seconds) {
+    var hours = Math.floor(seconds / 3600)
+    var minutes = Math.floor((seconds - (hours * 3600)) / 60)
+    var remainingSeconds = seconds - (hours * 3600) - (minutes * 60)
+
+    // Add leading zeros if necessary
+    if (hours < 10) {
+      hours = "0" + hours
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes
+    }
+    if (remainingSeconds < 10) {
+      remainingSeconds = "0" + remainingSeconds
+    }
+    if (remainingSeconds < 10)
+      return hours + ":" + minutes + ":" + "0" + Math.trunc(remainingSeconds);
+    else
+      return hours + ":" + minutes + ":" + Math.trunc(remainingSeconds);
 
   }
 
@@ -75,9 +97,11 @@ function App() {
 
         if (Math.round(seconds) === Math.round(duration)) { // is playback position at the end?
           clearInterval(timer) // kill timer
+          setPlay(false)
         }
 
         setSingleValue(Math.round(seconds)) // move slider in accordance with current playback position
+        setPosition(formatTime(seconds))
       }, 1000)
 
     }
@@ -124,8 +148,6 @@ function App() {
     sound.disconnect()
     sound.connect(pitch_shift)
     setPlaybackSpeed(e.target.value)
-
-
   }
 
   const sliderChange = (e, newVal) => {
@@ -133,6 +155,7 @@ function App() {
     sound.seek(loopMode ? e.target.value : e.target.value[0], '+0')
     loopMode ? setSingleValue(newVal) : setRangeValue(newVal)
     Transport.seconds = newVal
+    setPosition(formatTime(newVal))
   }
 
   const styles = {
@@ -154,48 +177,48 @@ function App() {
   return (
     <Box sx={styles}>
 
-      <div style={{ borderBottom: '1px lightgrey solid' }}>
+      <div style={{ border: 'none', marginBottom: '1em' }}>
         <h2 style={{ fontFamily: 'roboto', fontWeight: '400' }}>{fileName}</h2>
-        <h1 style={{ fontWeight: '400' }}>{position}</h1>
+        <h1 className='time-display' style={{ fontWeight: '400' }}>{position}</h1>
 
       </div>
 
       <div>
         <Slider sx={{
-    width: 300,
-    color: 'success.primary',
-    '& .MuiSlider-thumb': {
-      borderRadius: '1px',
-      width:'.5em'
-    },
-  }} value={loopMode ? singleValue : rangeValue} min={0} max={duration} onChange={sliderChange}
-          style={{ width: '90%', padding: '0em', marginBottom: '1em' }} defaultValue={0} getAriaLabel={() => 'Default'} valueLabelDisplay="auto" />
+          width: 300,
+          color: 'success.primary',
+          '& .MuiSlider-thumb': {
+            borderRadius: '1px',
+            width: '.5em'
+          },
+        }} value={loopMode ? singleValue : rangeValue} min={0} max={duration} onChange={sliderChange}
+          style={{ width: '90%', padding: '0em', marginBottom: '2em' }} defaultValue={0} getAriaLabel={() => 'Default'} valueLabelDisplay='auto' valueLabelFormat={position} />
       </div>
 
       <div>
-        <ButtonGroup style={{ paddingTop: '1.5em', scale: '1.3', width: '45%' }} variant="outlined" aria-label="outlined primary button group">
-          <Button component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
-          <Button><Pause /></Button>
-          <Button onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
-          <Button style={{ backgroundColor: loopMode ? 'white' : '#1976d2', color: loopMode ? '#1976d2' : 'white' }} onClick={playLoop}><Loop /></Button>
 
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Speed</InputLabel>
-            <Select style={{ height: '45px', width: 'fit-content' }}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={playbackSpeed}
-              label="Speed"
-              onChange={inputChange}
-              placeholder='1'
-              defaultValue='1'
-            >
-              {Object.keys(pb_rates).map(e => { return <MenuItem key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
-            </Select>
-          </FormControl>
-          </ButtonGroup>
+        <Button component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
+        <Button><Pause /></Button>
+        <Button onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
+        <Button>A</Button>
+        <Button>B</Button>
+        <Button style={{ backgroundColor: loopMode ? 'white' : '#1976d2', color: loopMode ? '#1976d2' : 'white' }} onClick={playLoop}><Loop /></Button>
+
+
+        <Select style={{ height: '40px', width: 'fit-content' }}
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={playbackSpeed}
+          onChange={inputChange}
+          placeholder='1'
+          defaultValue='1'
+        >
+          {Object.keys(pb_rates).map(e => { return <MenuItem key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
+        </Select>
+
+
       </div>
-      </Box>
+    </Box>
   )
 }
 
