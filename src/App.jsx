@@ -19,7 +19,7 @@ const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75':
 function App() {
 
   const [play, setPlay] = useState(false)
-  const [fileName, setFileName] = useState('No File Loaded')
+  const [fileName, setFileName] = useState('Isoloop - No File Loaded')
   const [sound, setSound] = useState(null)
   const [speed, setSpeed] = useState(1)
   const [playbackSpeed, setPlaybackSpeed] = useState('1.0');
@@ -126,7 +126,7 @@ function App() {
   }
 
   const fileSelect = (e) => {
-    setFileName(e.target.files[0].name)
+    setFileName('Isoloop - ' + e.target.files[0].name)
     let audioFile = URL.createObjectURL(e.target.files[0])
 
     setSound(new Player(audioFile).toDestination())
@@ -162,7 +162,6 @@ function App() {
     position: 'absolute',
     left: '30%',
     top: '30%',
-    border: '1px lightgrey solid',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -175,16 +174,18 @@ function App() {
 
 
   return (
-    <Box sx={styles}>
+    <Box className='glass' sx={styles}>
 
-      <div style={{ border: 'none', marginBottom: '1em' }}>
-        <h2 style={{ fontFamily: 'roboto', fontWeight: '400' }}>{fileName}</h2>
-        <h1 className='time-display' style={{ fontWeight: '400' }}>{position}</h1>
+      <div style={{ border: 'none', marginBottom: '1em', fontStyle:'italic' }}>
+        <div style={{padding:'.5em', fontSize:'1.1em', fontWeight:'100'}}>{fileName}</div>
+
+        <hr style={{ opacity: '.5' }}></hr>
+        <div className='time-display'>{position}</div>
 
       </div>
 
       <div>
-        <Slider sx={{
+        <Slider className='darken' sx={{
           width: 300,
           color: 'success.primary',
           '& .MuiSlider-thumb': {
@@ -197,15 +198,15 @@ function App() {
 
       <div>
 
-        <Button component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
-        <Button><Pause /></Button>
-        <Button onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
-        <Button>A</Button>
-        <Button>B</Button>
-        <Button style={{ backgroundColor: loopMode ? 'white' : '#1976d2', color: loopMode ? '#1976d2' : 'white' }} onClick={playLoop}><Loop /></Button>
+        <Button className='darken' component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
+        <Button className='darken'><Pause /></Button>
+        <Button className='darken' onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
+        <Button className='darken'>A</Button>
+        <Button className='darken'>B</Button>
+        <Button className='darken' style={{ filter: loopMode ? 'brightness(55%)' : 'brightness(100%)', color: loopMode ? '#3f50b5' : 'white' }} onClick={playLoop}><Loop /></Button>
 
 
-        <Select style={{ height: '40px', width: 'fit-content' }}
+        <Select style={{ height: '40px', width: 'auto', background: 'white', margin: '1em', fontStyle:'italic' }}
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={playbackSpeed}
@@ -213,7 +214,7 @@ function App() {
           placeholder='1'
           defaultValue='1'
         >
-          {Object.keys(pb_rates).map(e => { return <MenuItem key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
+          {Object.keys(pb_rates).map(e => { return <MenuItem style={{fontStyle:'italic'}} key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
         </Select>
 
 
