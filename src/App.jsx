@@ -12,6 +12,7 @@ import { default as Pause } from '@mui/icons-material/PauseCircleOutlineOutlined
 import { default as File } from '@mui/icons-material/AudioFileOutlined';
 import { default as Stop } from '@mui/icons-material/StopCircleOutlined';
 import { default as Loop } from '@mui/icons-material/Loop';
+import { default as Note } from '@mui/icons-material/MusicNote';
 
 // valid playback rates and pitch correction values
 const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5, '0.70': 6, '0.65': 7.5, '.60': 9, '0.55': 10.5, '0.50': 12 }
@@ -29,6 +30,8 @@ function App() {
   const [singleValue, setSingleValue] = useState(0)
   const [loopMode, setLoopMode] = useState('false')
   const [position, setPosition] = useState('00:00:00')
+
+  const defaultTextColor = '#3f50b5'
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
@@ -67,26 +70,12 @@ function App() {
 
     if (!play) {
       const playback_rate = playbackSpeed
-      const transpose_by = 0
-      var pitch_shift = null
-
       // set playback rate
       sound.playbackRate = playback_rate
       sound.toDestination();
-
-
-      // set pitch shift
-      if (playback_rate == 1) {
-        pitch_shift = new PitchShift({
-          pitch: transpose_by.toString()
-        }).toDestination();
-      } else {
-        let trans = transpose_by
-        trans = trans.toString()
-        pitch_shift = new PitchShift({
-          pitch: trans
-        }).toDestination();
-      }
+      // pitch correction
+      let pc = getpc(playback_rate)
+      let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
       sound.disconnect();
       sound.connect(pitch_shift);
 
@@ -138,16 +127,16 @@ function App() {
 
   const inputChange = (e) => {
     let pbr = e.target.value // new playback rate
+    setPlaybackSpeed(e.target.value)
 
     if (!sound) return
 
     let pc = getpc(pbr)
-
     sound.playbackRate = pbr
     let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
     sound.disconnect()
     sound.connect(pitch_shift)
-    setPlaybackSpeed(e.target.value)
+
   }
 
   const sliderChange = (e, newVal) => {
@@ -176,8 +165,8 @@ function App() {
   return (
     <Box className='glass' sx={styles}>
 
-      <div style={{ border: 'none', marginBottom: '1em', fontStyle:'italic' }}>
-        <div style={{padding:'.5em', fontSize:'1.1em', fontWeight:'100'}}>{fileName}</div>
+      <div style={{ border: 'none', marginBottom: '1em', fontStyle: 'italic' }}>
+        <div style={{ padding: '.5em', fontSize: '1.1em', fontWeight: '100' }}><Note sx={{ position: 'absolute', left: '0%', color: defaultTextColor }} />{fileName}</div>
 
         <hr style={{ opacity: '.5' }}></hr>
         <div className='time-display'>{position}</div>
@@ -203,10 +192,10 @@ function App() {
         <Button className='darken' onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
         <Button className='darken'>A</Button>
         <Button className='darken'>B</Button>
-        <Button className='darken' style={{ filter: loopMode ? 'brightness(55%)' : 'brightness(100%)', color: loopMode ? '#3f50b5' : 'white' }} onClick={playLoop}><Loop /></Button>
+        <Button className='darken' style={{ filter: loopMode ? 'brightness(55%)' : 'brightness(100%)', color: loopMode ? defaultTextColor : 'white' }} onClick={playLoop}><Loop /></Button>
 
 
-        <Select style={{ height: '40px', width: 'auto', background: 'white', margin: '1em', fontStyle:'italic' }}
+        <Select style={{ height: '40px', width: 'auto', background: 'white', margin: '1em', fontStyle: 'italic' }}
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={playbackSpeed}
@@ -214,7 +203,7 @@ function App() {
           placeholder='1'
           defaultValue='1'
         >
-          {Object.keys(pb_rates).map(e => { return <MenuItem style={{fontStyle:'italic'}} key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
+          {Object.keys(pb_rates).map(e => { return <MenuItem style={{ fontStyle: 'italic' }} key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
         </Select>
 
 
