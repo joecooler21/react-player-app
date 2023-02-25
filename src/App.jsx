@@ -106,6 +106,7 @@ function App() {
   }
 
   const playLoop = () => {
+    if (!sound) return
     loopMode ? setLoopMode(false) : setLoopMode(true)
     /* if (!sound) return
     sound.loopStart = value[0]
@@ -121,6 +122,7 @@ function App() {
     setSound(new Player(audioFile).toDestination())
     let buffer = new Buffer(audioFile, () => {
       setDuration(buffer.duration)
+      setRangeValue([0, buffer.duration])
     })
 
   }
@@ -139,12 +141,18 @@ function App() {
 
   }
 
-  const sliderChange = (e, newVal) => {
+  const seek = (e, newVal) => {
     if (!sound) return
-    sound.seek(loopMode ? e.target.value : e.target.value[0], '+0')
-    loopMode ? setSingleValue(newVal) : setRangeValue(newVal)
+    sound.seek(e.target.value, '+0')
+    setSingleValue(newVal)
     Transport.seconds = newVal
     setPosition(formatTime(newVal))
+  }
+
+  const setLoopRange = (e, newVal) => {
+    if (!sound) return
+    setRangeValue(e.target.value)
+
   }
 
   const styles = {
@@ -166,7 +174,8 @@ function App() {
     <Box className='glass' sx={styles}>
 
       <div style={{ border: 'none', marginBottom: '1em', fontStyle: 'italic' }}>
-        <div style={{ padding: '.5em', fontSize: '1.1em', fontWeight: '100' }}><Note sx={{ position: 'absolute', left: '0%', color: defaultTextColor }} />{fileName}</div>
+        <div style={{ padding: '.5em', fontSize: '1.1em', fontWeight: '100' }}>
+          <Note sx={{ position: 'absolute', left: '0%', color: defaultTextColor }} />{fileName}</div>
 
         <hr style={{ opacity: '.5' }}></hr>
         <div className='time-display'>{position}</div>
@@ -174,25 +183,41 @@ function App() {
       </div>
 
       <div>
-        <Slider className='darken' sx={{
-          width: 300,
-          color: 'success.primary',
-          '& .MuiSlider-thumb': {
-            borderRadius: '1px',
-            width: '.5em'
-          },
-        }} value={loopMode ? singleValue : rangeValue} min={0} max={duration} onChange={sliderChange}
-          style={{ width: '90%', padding: '0em', marginBottom: '2em' }} defaultValue={0} getAriaLabel={() => 'Default'} valueLabelDisplay='auto' valueLabelFormat={position} />
+        <Slider className='darken'
+         sx={{width: 300, color: 'success.primary','& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },}}
+          value={singleValue}
+          min={0}
+          max={duration}
+          onChange={seek}
+          style={{ width: '90%', padding: '0em', marginBottom: '1em' }}
+          defaultValue={0} getAriaLabel={() => 'Default'}
+          valueLabelDisplay='auto' valueLabelFormat={position} />
+
+        <Slider className='darken'
+        onChange={setLoopRange}
+        value={rangeValue}
+          sx={{ width: 300, color: 'success.primary', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
+           '& .MuiSlider-rail': {backgroundColor:'transparent'} }}
+          style={{ display: loopMode ? 'none' : 'inline-block', width: '90%', padding: '0em', marginBottom: '2em'}}
+          min={0}
+          defaultValue={rangeValue}
+          max={duration}
+          getAriaLabel={()=>'Default'}
+          valueLabelDisplay='auto'
+          valueLabelFormat={(text, index)=> {return formatTime(text)}}
+          />
       </div>
 
       <div>
 
         <Button className='darken' component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
-        <Button className='darken'><Pause /></Button>
-        <Button className='darken' onClick={playMode}>{play ? <Stop /> : <Play />}</Button>
+        <Button className='darken'><Stop /></Button>
+        <Button className='darken' onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
         <Button className='darken'>A</Button>
         <Button className='darken'>B</Button>
-        <Button className='darken' style={{ filter: loopMode ? 'brightness(55%)' : 'brightness(100%)', color: loopMode ? defaultTextColor : 'white' }} onClick={playLoop}><Loop /></Button>
+        <Button className='darken'
+          style={{ filter: loopMode ? 'brightness(55%)' : 'brightness(100%)', color: loopMode ? defaultTextColor : 'white' }}
+          onClick={playLoop}><Loop /></Button>
 
 
         <Select style={{ height: '40px', width: 'auto', background: 'white', margin: '1em', fontStyle: 'italic' }}
