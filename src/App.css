@@ -28,5 +28,10 @@ color:white;
 }
 
 .darken {
-    filter:brightness(55%);
+    filter:brightness(55%)
 }
+
+.text-shadow {
+    text-shadow: 3px 3px 2px rgba(29, 94, 138, .60)
+}
+
