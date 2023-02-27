@@ -190,6 +190,15 @@ function App() {
     borderRadius: '10px',
   }
 
+  const stop = () => {
+    if (!play) return
+    setPlay(false)
+    sound.stop()
+    Transport.stop()
+    setSingleValue(0)
+    setPosition(formatTime(0))
+  }
+
   useEffect(() => {
     if (Math.round(seconds) === Math.round(duration)) { // is playback position at the end?
       clearInterval(timer)
@@ -291,7 +300,7 @@ function App() {
 
         <Button style={{ color: 'lightgrey' }} component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
         <Button sx={{ color: 'lightgrey', transform: 'scale(1.5)' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
-        <Button style={{ color: 'lightgrey' }} ><Stop /></Button>
+        <Button onClick={stop} style={{ color: 'lightgrey' }} ><Stop /></Button>
 
         <Button
           sx={{ color: loop ? 'lightgreen' : 'lightgrey', position: 'absolute', left: '2em', bottom: '3em' }}
