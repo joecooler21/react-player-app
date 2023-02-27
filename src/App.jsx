@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Player, PitchShift, Buffer, Transport } from 'tone'
 import { Button, Box, ButtonGroup, Slider, TextField, Select, InputLabel, MenuItem, FormControl } from '@mui/material'
 import './App.css'
@@ -15,14 +15,49 @@ import { default as Loop } from '@mui/icons-material/Loop';
 import { default as Note } from '@mui/icons-material/MusicNote';
 
 // valid playback rates and pitch correction values
-const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5, '0.70': 6, '0.65': 7.5, '.60': 9, '0.55': 10.5, '0.50': 12 }
+const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5, '0.70': 6, '0.65': 7.5, '0.60': 9, '0.55': 10.5, '0.50': 12 }
+const marks = [
+  {
+    value: 1.0,
+  },
+  {
+    value: 0.95,
+  },
+  {
+    value: 0.90,
+  },
+  {
+    value: 0.85,
+  },
+  {
+    value: 0.80,
+  },
+  {
+    value: 0.75,
+  },
+  {
+    value: 0.70,
+  },
+  {
+    value: 0.65,
+  },
+  {
+    value: 0.60,
+  },
+  {
+    value: 0.55,
+  },
+  {
+    value: 0.50,
+  },
+];
+
 
 function App() {
 
   const [play, setPlay] = useState(false)
-  const [fileName, setFileName] = useState('Isoloop - No File Loaded')
+  const [fileName, setFileName] = useState('No File Loaded')
   const [sound, setSound] = useState(null)
-  const [speed, setSpeed] = useState(1)
   const [playbackSpeed, setPlaybackSpeed] = useState('1.0');
   const [loop, setLoop] = useState(false)
   const [duration, setDuration] = useState(0)
@@ -30,8 +65,7 @@ function App() {
   const [singleValue, setSingleValue] = useState(0)
   const [position, setPosition] = useState('00:00:00')
   const [timer, setTimer] = useState(null)
-
-  const defaultTextColor = '#3f50b5'
+  const [seconds, setSeconds] = useState(0)
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
@@ -75,7 +109,7 @@ function App() {
       let pc = getpc(playback_rate)
       let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
       sound.disconnect();
-      
+
       sound.connect(pitch_shift);
 
       sound.start()
@@ -83,23 +117,14 @@ function App() {
       Transport.start()
       setTimer(setInterval(() => {
 
-        let seconds = Transport.seconds // get current playback position
-
-        if (Math.round(seconds) === Math.round(duration)) { // is playback position at the end?
-          clearInterval(timer) // kill timer
-          setPlay(false)
-        }
-
-        setSingleValue(Math.round(seconds))// move slider in accordance with current playback position
-        setPosition(formatTime(seconds))
-      }, 1000))
+        setSeconds(Math.round(Transport.seconds)) // get current playback position
+      }, 1000 * playbackSpeed))
 
     }
 
     if (play) {
+      Transport.pause()
       sound.stop()
-      Transport.stop()
-      clearInterval(timer)
     }
 
 
@@ -113,26 +138,21 @@ function App() {
       sound.loop = true
       sound.seek(rangeValue[0])
       sound.start()
-      
-      setSingleValue(rangeValue[0])
 
-      setTimer(setInterval(() =>{
-        let seconds = Math.round(Transport.seconds)
-        console.log(seconds)
-        setSingleValue(seconds)
-        setPosition(formatTime(seconds))
+      setTimer(setInterval(() => {
+        setSeconds(Math.round(Transport.seconds))
 
-      }, 1000))
+      }, 1000 * playbackSpeed))
 
     } else {
       sound.loop = false
 
     }
-    loop? setLoop(false) : setLoop(true)
+    loop ? setLoop(false) : setLoop(true)
   }
 
   const fileSelect = (e) => {
-    setFileName('Isoloop - ' + e.target.files[0].name)
+    setFileName(e.target.files[0].name)
     let audioFile = URL.createObjectURL(e.target.files[0])
 
     setSound(new Player(audioFile).toDestination())
@@ -140,20 +160,6 @@ function App() {
       setDuration(buffer.duration)
       setRangeValue([0, buffer.duration])
     })
-
-  }
-
-  const inputChange = (e) => {
-    let pbr = e.target.value // new playback rate
-    setPlaybackSpeed(e.target.value)
-
-    if (!sound) return
-
-    let pc = getpc(pbr)
-    sound.playbackRate = pbr
-    let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
-    sound.disconnect()
-    sound.connect(pitch_shift)
 
   }
 
@@ -169,86 +175,138 @@ function App() {
     if (!sound) return
     setRangeValue(e.target.value)
     sound.loopStart = newVal[0]
-      sound.loopEnd = newVal[1]
+    sound.loopEnd = newVal[1]
 
   }
 
   const styles = {
-    position: 'absolute',
-    left: '22.5%',
-    top: '30%',
-    display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    width: '55%',
-    height: 'fit-content',
+    width: '250px',
+    height: '350px',
     padding: '0 0 2em 0',
     borderRadius: '10px',
-    overflow: 'hidden',
+  }
+
+  useEffect(() => {
+    if (Math.round(seconds) === Math.round(duration)) { // is playback position at the end?
+      clearInterval(timer)
+      Transport.stop()
+      setPlay(false)
+    }
+    setSingleValue(seconds)
+    setPosition(formatTime(seconds))
+    if (loop) {
+      if (seconds === rangeValue[1]) {
+        Transport.seconds = rangeValue[0]
+        setSingleValue(rangeValue[0])
+        setPosition(formatTime(rangeValue[0]))
+      }
+    }
+
+  }, [seconds])
+
+  useEffect(() => {
+    if (loop) {
+      Transport.seconds = rangeValue[0]
+      setSeconds(Math.round(Transport.seconds))
+      setSingleValue(rangeValue[0])
+    }
+
+  }, [loop])
+
+  const changePlaybackSpeed = (e) => {
+    let pbr = null
+    // need to format value from slider to match valid pbr array values
+    if (e.target.value === 1.0) { pbr = '1.0' } else {
+      pbr = e.target.value.toString().padEnd(4, 0)
+    }
+    setPlaybackSpeed(pbr)
+    if (!sound) return
+    // set a delay for changing the playback speed otherwise results in too much lag/distortion
+    setTimeout(() => {
+      let pc = getpc(pbr)
+      sound.playbackRate = pbr
+      let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
+      sound.disconnect()
+      sound.connect(pitch_shift)
+    }, 2000)
   }
 
 
   return (
-    <Box className='glass' sx={styles}>
+    <Box className='glass center' sx={styles}>
 
-      <div style={{ border: 'none', marginBottom: '1em', fontStyle: 'italic' }}>
-        <div className='text-shadow' style={{ padding: '.5em', fontSize: '1.1em', fontWeight: '100' }}>
-          <Note sx={{ position: 'absolute', left: '0%', color: defaultTextColor }} />{fileName}</div>
-
-        <hr style={{ opacity: '.5' }}></hr>
-        <div className='time-display text-shadow'>{position}</div>
+      <div className='time-display'>
+        <p className='display-text pixel'>{fileName}</p>
+        <p style={{ fontSize: '1.5em' }} className='display-text pixel'>{position}</p>
 
       </div>
 
       <div>
         <Slider className='darken'
-         sx={{width: 300, color: 'success.primary','& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
-         '& .MuiSlider-valueLabel': {backgroundColor:'transparent', color:'black', fontStyle:'italic'}}}
+          sx={{
+            color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
+            '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
+          }}
           value={singleValue}
           min={0}
           max={duration}
           onChange={seek}
-          style={{ width: '90%', padding: '0em', marginBottom: '1em' }}
+          style={{ width: '70%', padding: '0em', marginBottom: '1em' }}
           defaultValue={0} getAriaLabel={() => 'Default'}
-          valueLabelDisplay='auto' valueLabelFormat={position} />
+          valueLabelDisplay='off' valueLabelFormat={position} />
 
         <Slider
-        className='darken'
-        onChange={setLoopRange}
-        value={rangeValue}
-          sx={{ width: 300, color: 'success.primary', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
-           '& .MuiSlider-rail': {backgroundColor:'transparent'},
-            '& .MuiSlider-valueLabel': {backgroundColor:'transparent', color:'black', top:'3.5em', fontStyle:'italic'}}}
-          style={{ width: '90%', padding: '0em', marginBottom: '2em'}}
+          onChange={setLoopRange}
+          value={rangeValue}
+          sx={{
+            visibility: loop ? 'visible' : 'hidden', color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.2em' },
+            '& .MuiSlider-rail': { backgroundColor: 'transparent' }, '& .MuiSlider-track': { color: 'lightgreen' },
+            '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', top: '3.5em', fontStyle: 'italic' }
+          }}
+          style={{ width: '70%', padding: '0em', marginBottom: '2em' }}
           min={0}
           defaultValue={rangeValue}
           max={duration}
-          getAriaLabel={()=>'Default'}
+          getAriaLabel={() => 'Default'}
           valueLabelDisplay='auto'
-          valueLabelFormat={(text, index)=> {return formatTime(text)}}
-          />
+          valueLabelFormat={(text, index) => { return formatTime(text) }}
+        />
       </div>
 
       <div>
 
-        <Button className='darken' component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
-        <Button className='darken'><Stop /></Button>
-        <Button className='darken' onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
-        <Button className='darken'
-          style={{ filter: loop ? 'brightness(100%)' : 'brightness(55%)', color: loop ? 'white':defaultTextColor}}
+        <Button style={{ color: 'lightgrey' }} component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
+        <Button sx={{ color: 'lightgrey', transform: 'scale(1.5)' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
+        <Button style={{ color: 'lightgrey' }} ><Stop /></Button>
+
+        <Button
+          sx={{ color: loop ? 'lightgreen' : 'lightgrey', position: 'absolute', left: '2em', bottom: '3em' }}
           onClick={playLoop}><Loop /></Button>
 
 
-        <Select style={{ height: '40px', width: 'auto', background: 'white', margin: '1em', fontStyle: 'italic' }}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={playbackSpeed}
-          onChange={inputChange}
-          placeholder='1'
-          defaultValue='1'
-        >
-          {Object.keys(pb_rates).map(e => { return <MenuItem style={{ fontStyle: 'italic' }} key={e.toString()} value={e.toString()}>{e.toString()}</MenuItem> })}
-        </Select>
+
+        <Slider
+          sx={{
+            '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
+            width: '100px', color: 'lightgrey', position: 'absolute', right: '20%', bottom: '12%',
+            '& .MuiSlider-valueLabel': {
+              backgroundColor: 'transparent', color: 'lightgrey',
+               top:'1%',fontStyle: 'italic'
+            }
+          }}
+          aria-label="Custom marks"
+          defaultValue={1.0}
+          step={0.05}
+          max={1.0}
+          min={.5}
+          valueLabelDisplay="auto"
+          marks={marks}
+          onChange={changePlaybackSpeed}
+        />
+
+
 
 
       </div>

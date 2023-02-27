@@ -1,14 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
+
+
+  @font-face {
+    font-family: retro;
+    src: url(src/fonts/retro/retro.ttf);
+  }
+
+  
+
+  .pixel {
+    font-family:retro !important;
+    letter-spacing: .05em;
+  }
+
 * {
     font-family: 'roboto'
 }
 
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
 .time-display {
-    font-size: 3em;
-    margin-top:1em;
-    margin-bottom:1em;
-    margin-right:.3em;
-    font-weight:100;
-    font-style:italic;
+    height:140px;
+    margin: 1em;
+    margin-bottom:2em;
+    border-radius:5px;
+    border-top:1px solid lightgrey;
+    border-left:1px solid lightgrey;
+    border-bottom:1px solid darkgrey;
+    border-right:1px solid darkgrey;
+    background-color:white;
+   
+}
+
+.display-text {
+    color:black;
+    font-family: 'Source Code Pro', monospace;
+    font-size:.9em;
+    font-weight:bolder;
 }
 
 body {
@@ -17,18 +52,14 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,255,243,1) 0%, rgba
 }
 
 .glass {
-    /* From https://css.glass */
-background: rgba(255, 255, 255, 0.2);
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(3,4,4,1) 0%, rgba(0,219,246,1) 0%, rgba(0,212,246,1) 0%, rgba(0,206,246,1) 0%, rgba(0,165,249,1) 0%, rgba(0,0,0,1) 0%, rgba(151,158,173,1) 100%);
 border-radius: 16px;
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(5px);
 -webkit-backdrop-filter: blur(5px);
 border: 1px solid rgba(255, 255, 255, 0.3);
 color:white;
-}
-
-.darken {
-    filter:brightness(55%)
 }
 
 .text-shadow {
