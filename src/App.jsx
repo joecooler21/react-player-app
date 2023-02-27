@@ -12,7 +12,6 @@ import { default as Pause } from '@mui/icons-material/PauseCircleOutlineOutlined
 import { default as File } from '@mui/icons-material/AudioFileOutlined';
 import { default as Stop } from '@mui/icons-material/StopCircleOutlined';
 import { default as Loop } from '@mui/icons-material/Loop';
-import { default as Note } from '@mui/icons-material/MusicNote';
 
 // valid playback rates and pitch correction values
 const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5, '0.70': 6, '0.65': 7.5, '0.60': 9, '0.55': 10.5, '0.50': 12 }
@@ -101,6 +100,7 @@ function App() {
     if (!sound) return
 
     if (!play) {
+      
       const playback_rate = playbackSpeed
       // set playback rate
       sound.playbackRate = playback_rate
@@ -115,12 +115,14 @@ function App() {
       sound.start()
       sound.seek(singleValue, '+0')
       Transport.start()
+
       setTimer(setInterval(() => {
 
-        setSeconds(Math.round(Transport.seconds)) // get current playback position
+        setSeconds(Math.round(Transport.seconds)) // set current playback position
       }, 1000 * playbackSpeed))
 
     }
+
 
     if (play) {
       Transport.pause()
@@ -142,7 +144,7 @@ function App() {
       setTimer(setInterval(() => {
         setSeconds(Math.round(Transport.seconds))
 
-      }, 1000 * playbackSpeed))
+      }, 1000))
 
     } else {
       sound.loop = false
@@ -214,6 +216,16 @@ function App() {
     }
 
   }, [loop])
+
+  useEffect (() => {
+    clearInterval(timer)
+    setInterval(()=>{
+      setSeconds(Math.round(Transport.seconds))
+
+    }, Math.round(1000 / playbackSpeed))
+    console.log(Math.round(1000 / playbackSpeed))
+
+  }, [playbackSpeed])
 
   const changePlaybackSpeed = (e) => {
     let pbr = null
