@@ -144,7 +144,7 @@ function App() {
       setTimer(setInterval(() => {
         setSeconds(Math.round(Transport.seconds))
 
-      }, 1000))
+      }, 1000 / playbackSpeed))
 
     } else {
       sound.loop = false
@@ -326,10 +326,6 @@ function App() {
           marks={marks}
           onChange={changePlaybackSpeed}
         />
-
-
-
-
       </div>
     </Box>
   )

@@ -3,7 +3,7 @@
 
   @font-face {
     font-family: retro;
-    src: url(src/assets/fonts/retro/retro.ttf);
+    src: url('./src/assets/fonts/retro/retro.ttf');
   }
 
   
@@ -35,7 +35,7 @@
     border-left:1px solid lightgrey;
     border-bottom:1px solid darkgrey;
     border-right:1px solid darkgrey;
-    background-color:white;
+    background-color:lightgrey;
    
 }
 

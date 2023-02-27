@@ -4,10 +4,10 @@ This is for guitar players who just need a simple, quick, no-nonsense applicatio
 # USAGE
 
 1) Load a file
-2) Adjust desired playback speed
-3) Use A and B buttons to set your start and end points for looping
-4) Shred
+2) Adjust desired playback speed with bottom slider
+3) Use Loop button to enable A & B slider
+4) Play
 
 # FRAMEWORKS / LIBRARIES USED
 
-React, Tone.js, Material UI
+React, Material UI, Tone.js
