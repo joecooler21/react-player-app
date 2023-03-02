@@ -35,8 +35,20 @@
     border-left:1px solid lightgrey;
     border-bottom:1px solid darkgrey;
     border-right:1px solid darkgrey;
-    background-color:lightgrey;
+    background-color: white;
    
+}
+
+.time-display::after {
+  content:'';
+  position: absolute;
+  top:4%;
+  left:0%;
+  width:93.5%;
+  height: 143px;
+  background-image: linear-gradient(rgba(39, 43, 46, 0.6) .3px, transparent .3px);
+  background-size: 2px 2px;
+  background-attachment: fixed;
 }
 
 .display-text {
