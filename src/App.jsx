@@ -138,8 +138,8 @@ function App() {
     if (!loop) {
       clearInterval(timer)
       sound.loop = true
-      sound.seek(rangeValue[0])
-      sound.start()
+      /* sound.seek(rangeValue[0])
+      sound.start() */
 
       setTimer(setInterval(() => {
         setSeconds(Math.round(Transport.seconds))
@@ -208,8 +208,15 @@ function App() {
     setSingleValue(seconds)
     setPosition(formatTime(seconds))
     if (loop) {
-      if (seconds === rangeValue[1]) {
+      if (seconds >= rangeValue[1]) {
         Transport.seconds = rangeValue[0]
+        sound.seek(rangeValue[0], '+0')
+        setSingleValue(rangeValue[0])
+        setPosition(formatTime(rangeValue[0]))
+      }
+      if (seconds <= rangeValue[0]) {
+        Transport.seconds = rangeValue[0]
+        sound.seek(rangeValue[0], '+0')
         setSingleValue(rangeValue[0])
         setPosition(formatTime(rangeValue[0]))
       }
@@ -232,7 +239,6 @@ function App() {
       setSeconds(Math.round(Transport.seconds))
 
     }, Math.round(1000 / playbackSpeed))
-    console.log(Math.round(1000 / playbackSpeed))
 
   }, [playbackSpeed])
 
@@ -261,6 +267,11 @@ function App() {
       <div className='time-display'>
         <p className='display-text pixel'>{fileName}</p>
         <p style={{ fontSize: '1.5em' }} className='display-text pixel'>{position}</p>
+
+        {loop ? <div style={{position:'relative', bottom:'2em',display:'flex', justifyContent:'space-around'}}>
+          <p className='display-text pixel'>{formatTime(rangeValue[0])}</p>
+          <p className='display-text pixel'>{formatTime(rangeValue[1])}</p>
+        </div> : null}
 
       </div>
 
@@ -291,14 +302,14 @@ function App() {
           defaultValue={rangeValue}
           max={duration}
           getAriaLabel={() => 'Default'}
-          valueLabelDisplay='auto'
+          valueLabelDisplay='off'
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
       </div>
 
       <div>
 
-        <Button style={{ color: 'lightgrey' }} component='label'><File /><input onChange={fileSelect} type='file' hidden /></Button>
+        <Button style={{ color: 'lightgrey' }} component='label'><File /><input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
         <Button sx={{ color: 'lightgrey', transform: 'scale(1.5)' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
         <Button onClick={stop} style={{ color: 'lightgrey' }} ><Stop /></Button>
 
