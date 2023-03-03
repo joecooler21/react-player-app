@@ -160,11 +160,12 @@ function App() {
   }
 
   const stop = () => {
-    if (!play) return
     setPlay(false)
+    setLoop(false)
     sound.stop()
     Transport.stop()
     setSingleValue(0)
+    setRangeValue([0, duration])
     setPosition(formatTime(0))
   }
 
