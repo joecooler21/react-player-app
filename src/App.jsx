@@ -14,42 +14,11 @@ import { default as Stop } from '@mui/icons-material/StopCircleOutlined';
 import { default as Loop } from '@mui/icons-material/Loop';
 
 // valid playback rates and pitch correction values
-const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5, '0.70': 6, '0.65': 7.5, '0.60': 9, '0.55': 10.5, '0.50': 12 }
-const marks = [
-  {
-    value: 1.0,
-  },
-  {
-    value: 0.95,
-  },
-  {
-    value: 0.90,
-  },
-  {
-    value: 0.85,
-  },
-  {
-    value: 0.80,
-  },
-  {
-    value: 0.75,
-  },
-  {
-    value: 0.70,
-  },
-  {
-    value: 0.65,
-  },
-  {
-    value: 0.60,
-  },
-  {
-    value: 0.55,
-  },
-  {
-    value: 0.50,
-  },
-];
+const pb_rates = { '1.0': 0, '0.95': 1, '0.90': 2, '0.85': 3, '0.80': 4, '0.75': 5,
+'0.70': 6, '0.65': 7.5, '0.60': 9, '0.55': 10.5, '0.50': 12 }
+
+const marks = [{value: 1.0,}, {value: 0.95},{value: 0.90,},{value: 0.85,},{value: 0.80,},{value: 0.75,},
+  {value: 0.70,}, {value: 0.65,},{value: 0.60,},{value: 0.55,},{value: 0.50,},];
 
 
 function App() {
@@ -144,7 +113,7 @@ function App() {
       setTimer(setInterval(() => {
         setSeconds(Math.round(Transport.seconds))
 
-      }, 1000 / playbackSpeed))
+      }, Math.round(1000 / playbackSpeed)))
 
     } else {
       sound.loop = false
@@ -221,6 +190,7 @@ function App() {
         setPosition(formatTime(rangeValue[0]))
       }
     }
+    console.log(seconds)
 
   }, [seconds])
 
@@ -265,12 +235,15 @@ function App() {
     <Box className='glass center' sx={styles}>
 
       <div className='time-display'>
-        <p className='display-text pixel'>{fileName}</p>
-        <p style={{ fontSize: '1.5em' }} className='display-text pixel'>{position}</p>
+        <p style={{fontSize:'.5em'}} className='display-text pixel'>{fileName}</p>
+        <p style={{ fontSize: '1.2em' }} className='display-text pixel'>{position}</p>
+        <p style={{fontSize:'.5em', position:'absolute', left:'32%', top:'24%'}}
+         className='display-text pixel'>speed: {playbackSpeed}</p>
 
-        {loop ? <div style={{position:'relative', bottom:'2em',display:'flex', justifyContent:'space-around'}}>
-          <p className='display-text pixel'>{formatTime(rangeValue[0])}</p>
-          <p className='display-text pixel'>{formatTime(rangeValue[1])}</p>
+        {loop ? <div style={{position:'relative', bottom:'-15%',display:'flex', justifyContent:'space-around'}}>
+          <p style={{fontSize: '.5em'}} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
+          <Loop style={{position:'absolute', top:'20%', fontSize:'.9em', color:'black'}} />
+          <p style={{fontSize:'.5em'}} className='display-text pixel'>{formatTime(rangeValue[1])}</p>
         </div> : null}
 
       </div>
@@ -309,7 +282,9 @@ function App() {
 
       <div>
 
-        <Button style={{ color: 'lightgrey' }} component='label'><File /><input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
+        <Button style={{ color: 'lightgrey' }} component='label'><File />
+        <input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
+
         <Button sx={{ color: 'lightgrey', transform: 'scale(1.5)' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
         <Button onClick={stop} style={{ color: 'lightgrey' }} ><Stop /></Button>
 

@@ -3,7 +3,7 @@
 
   @font-face {
     font-family: retro;
-    src: url('../assets/fonts/retro/retro.ttf');
+    src: url('../assets/fonts/retro/ARCADE_I.TTF');
   }
 
   
@@ -19,10 +19,19 @@
 .center {
     margin: 0;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 26%;
+    left: 40%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    transform:scale(1.3)
+  }
+
+  @media(max-width:768px) {
+    .center {
+      transform:scale(1) !important;
+      left:25% !important;
+      top:15% !important;
+    }
   }
 
 .time-display {
@@ -52,7 +61,7 @@
 
 .display-text {
     color:black;
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'roboto';
     font-size:.9em;
     font-weight:bolder;
 }
@@ -70,6 +79,7 @@ box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(5px);
 -webkit-backdrop-filter: blur(5px);
 border: 1px solid rgba(255, 255, 255, 0.3);
+border-left:none;
 color:white;
 }
 
