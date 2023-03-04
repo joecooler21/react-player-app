@@ -34,6 +34,7 @@ function App() {
   const [position, setPosition] = useState('00:00:00')
   const [timer, setTimer] = useState(null)
   const [seconds, setSeconds] = useState(0)
+  const [volume, setVolume] = useState(100)
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
@@ -60,6 +61,13 @@ function App() {
       return hours + ":" + minutes + ":" + "0" + Math.trunc(remainingSeconds);
     else
       return hours + ":" + minutes + ":" + Math.trunc(remainingSeconds);
+
+  }
+
+  const volumeSlider = (e) => {
+    setVolume(e.target.value)
+    if (!sound) return
+    sound.volume.value = e.target.value - 100
 
   }
 
@@ -191,7 +199,6 @@ function App() {
         setPosition(formatTime(rangeValue[0]))
       }
     }
-    console.log(seconds)
 
   }, [seconds])
 
@@ -293,12 +300,25 @@ function App() {
           sx={{ color: loop ? 'lightgreen' : 'lightgrey', position: 'absolute', left: '2em', bottom: '3em' }}
           onClick={playLoop}><Loop /></Button>
 
+<Slider className='darken'
+          sx={{
+            color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
+            '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
+          }}
+          value={volume}
+          min={0}
+          max={100}
+          onChange={volumeSlider}
+          style={{ width: '100px', position:'absolute', right:'20%', bottom:'15%'}}
+          defaultValue={100} getAriaLabel={() => 'Default'}
+          valueLabelDisplay='off' valueLabelFormat={position} />
+
 
 
         <Slider
           sx={{
             '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em' },
-            width: '100px', color: 'lightgrey', position: 'absolute', right: '20%', bottom: '12%',
+            width: '100px', color: 'lightgrey', position: 'absolute', right: '20%', bottom: '5%',
             '& .MuiSlider-valueLabel': {
               backgroundColor: 'transparent', color: 'lightgrey',
                top:'1%',fontStyle: 'italic'
