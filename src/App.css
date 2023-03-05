@@ -3,7 +3,37 @@
 
   @font-face {
     font-family: retro;
-    src: url('../assets/fonts/retro/ARCADE_I.TTF');
+    src: url('../assets/fonts/retro/ChicagoFLF.ttf');
+  }
+
+  :root {
+    --light-background: #FFFFFF;
+    --dark-background: #E3E4E5;
+    --light-screen-background: #D6D5D0;
+    --dark-screen-background: #A5A59B;
+    --screen-light: #C1C1BA;
+    --screen-dark: #484647;
+    --icon-light-grey: #BABDC1;
+    --light-grey: #F2F2F2;
+    --mid-grey: #999999;
+    --dark-grey: #595959;
+    --very-dark-grey: #4D4D4D;
+  }
+
+ 
+
+
+	.screen {
+    position: relative;
+    margin: 30px auto 0px auto;
+    width: 210px !important;
+    height: 250px !important;
+    background: linear-gradient(135deg, var(--dark-screen-background), var(--light-screen-background));
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 10px 2px var(--very-dark-grey);
+    font-family: "ChicagoFont", "Arial";
+    font-size: 130%;
+    color: var(--screen-dar);
   }
 
   
@@ -55,23 +85,37 @@
     font-weight:bolder;
 }
 
-body {
-background: rgb(2,0,36);
-background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,255,243,1) 0%, rgba(0,219,246,1) 0%, rgba(0,212,246,1) 0%, rgba(0,206,246,1) 0%, rgba(0,74,255,1) 100%);
+.shell {
+	width: 255px !important;
+	height: 265px !important;
+	border: 1px solid transparent;
+	border-radius: 38px;
+	background: linear-gradient(45deg, var(--light-background), var(--dark-background));
+	box-shadow: inset 5px -5px 15px 0px grey;
 }
 
-.glass {
-    background: rgb(2,0,36);
-    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(3,4,4,1) 0%, rgba(0,219,246,1) 0%, rgba(0,212,246,1) 0%, rgba(0,206,246,1) 0%, rgba(0,165,249,1) 0%, rgba(0,0,0,1) 0%, rgba(151,158,173,1) 100%);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(5px);
--webkit-backdrop-filter: blur(5px);
-border: 1px solid rgba(255, 255, 255, 0.3);
-border-left:none;
-color:white;
+.centered {
+  top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
+
+.theme-button {
+	border: 2px solid var(--icon-light-grey) !important;
+  border-radius: 5px;
+	background-color: #CBCCCE;
+  color:black !important;
+	background: radial-gradient(farthest-side at -90% 80%, var(--mid-grey), var(--light-grey));
+}
+
+.theme-button:hover {
+  cursor: pointer;
+}
+
 
 .text-shadow {
     text-shadow: 3px 3px 2px rgba(29, 94, 138, .60)
 }
+
+
+
