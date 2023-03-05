@@ -71,7 +71,7 @@ function App() {
   const volumeSlider = (e) => {
     setVolume(e.target.value)
     if (!sound) return
-    sound.volume.value = e.target.value - 100
+    sound.volume.value = (e.target.value - 100)
 
   }
 
@@ -231,15 +231,17 @@ function App() {
       pbr = e.target.value.toString().padEnd(4, 0)
     }
     setPlaybackSpeed(pbr)
+  }
+
+  const changePlaybackSpeedComitted = (e) => {
+    
     if (!sound) return
-    // set a delay for changing the playback speed otherwise results in too much lag/distortion
-    setTimeout(() => {
-      let pc = getpc(pbr)
-      sound.playbackRate = pbr
+      let pc = getpc(playbackSpeed)
+      sound.playbackRate = playbackSpeed
       let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
       sound.disconnect()
       sound.connect(pitch_shift)
-    }, 2000)
+    
   }
 
 
@@ -342,6 +344,7 @@ function App() {
           min={.5}
           valueLabelDisplay="off"
           marks={marks}
+          onChangeCommitted={changePlaybackSpeedComitted}
           onChange={changePlaybackSpeed}
         />
         </div>
