@@ -27,13 +27,29 @@
     position: relative;
     margin: 30px auto 0px auto;
     width: 210px !important;
-    height: 250px !important;
-    background: linear-gradient(135deg, var(--dark-screen-background), var(--light-screen-background));
+    height: 210px !important;
+    background: linear-gradient(135deg, #00dbf6, #00dbf6);
     border-radius: 10px;
     box-shadow: inset 0px 0px 10px 2px var(--very-dark-grey);
     font-family: "ChicagoFont", "Arial";
     font-size: 130%;
-    color: var(--screen-dar);
+    color: var(--screen-dark);
+  }
+
+  .center-button {
+    position: absolute;
+    bottom: 5%;
+    left:42.5%;
+    height: 35px;
+    width: 35px;
+    border: 2px solid var(--icon-light-grey);
+    border-radius: 50%;
+    background-color: #CBCCCE;
+    background: radial-gradient(farthest-side at -90% 80%, var(--mid-grey), var(--light-grey));
+  }
+
+  .center-button:hover {
+    cursor: pointer;
   }
 
   
@@ -92,6 +108,7 @@
 	border-radius: 38px;
 	background: linear-gradient(45deg, var(--light-background), var(--dark-background));
 	box-shadow: inset 5px -5px 15px 0px grey;
+  transform:scale(2)
 }
 
 .centered {
@@ -121,5 +138,4 @@ body {
   display:flex;
   justify-content: center;
 }
-
 
