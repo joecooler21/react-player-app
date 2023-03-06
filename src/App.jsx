@@ -8,7 +8,7 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 
 import { default as Play } from '@mui/icons-material/PlayArrow'
-import { default as Pause } from '@mui/icons-material/PauseCircleOutlineOutlined'
+import { default as Pause } from '@mui/icons-material/Pause'
 import { default as File } from '@mui/icons-material/AudioFile'
 import { default as Stop } from '@mui/icons-material/Stop'
 import { default as Loop } from '@mui/icons-material/Loop'
@@ -71,11 +71,11 @@ function App() {
   const volumeSlider = (e) => {
     setVolume(e.target.value)
     if (!sound) return
-    sound.volume.value = (e.target.value - 100)
+    sound.volume.value = (e.target.value)
 
   }
 
-  // play and stop
+  // play and pause
   const playMode = () => {
 
     if (!sound) return
@@ -172,17 +172,17 @@ function App() {
   }
 
   const stop = () => {
-    setPlay(false)
-    setLoop(false)
     sound.stop()
     Transport.stop()
+    setPlay(false)
+    setLoop(false)
     setSingleValue(0)
     setRangeValue([0, duration])
     setPosition(formatTime(0))
   }
 
   useEffect(() => {
-    if (Math.round(seconds) === Math.round(duration)) { // is playback position at the end?
+    if (Math.round(seconds) === Math.round(duration) && !loop) { // is playback position at the end?
       clearInterval(timer)
       Transport.stop()
       setPlay(false)
@@ -205,15 +205,6 @@ function App() {
     }
 
   }, [seconds])
-
-  useEffect(() => {
-    if (loop) {
-      Transport.seconds = rangeValue[0]
-      setSeconds(Math.round(Transport.seconds))
-      setSingleValue(rangeValue[0])
-    }
-
-  }, [loop])
 
   useEffect(() => {
     clearInterval(timer)
@@ -250,7 +241,7 @@ function App() {
 
       <div className='time-display screen'>
         <p style={{ fontSize: '.5em' }} className='display-text pixel'>{fileName}</p>
-        <p style={{ fontSize: '1.2em', position: 'absolute', left: '22.5%', top:'3%' }} className='display-text pixel'>{position}</p>
+        <p style={{ fontSize: '1.2em', position: 'absolute', left: '22.5%', top:'5%' }} className='display-text pixel'>{position}</p>
         
 
         <Slider
@@ -276,7 +267,7 @@ function App() {
             '& .MuiSlider-rail': { backgroundColor: 'transparent', width: '.2em' }, '& .MuiSlider-track': { color: 'black', width: '.2em' },
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', top: '3.5em', fontStyle: 'italic' }
           }}
-          style={{ height: '.01em', width: '70%', padding: '0em', top: '15%' }}
+          style={{ height: '.01em', width: '70%', padding: '0em', top: '10%' }}
           min={0}
           defaultValue={rangeValue}
           max={duration}
@@ -289,7 +280,7 @@ function App() {
           onClick={playLoop}><Loop />
         </Button>
 
-        {loop ? <div style={{ position: 'relative', top: '15%', display: 'flex', justifyContent: 'space-around' }}>
+        {loop ? <div style={{ position: 'relative', top: '10%', display: 'flex', justifyContent: 'space-around' }}>
           <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
 
 
@@ -306,7 +297,7 @@ function App() {
         <div style={{width:'100%', height:'30px', display:'flex', justifyContent:'center', position:'absolute', left:'0%', top:'55%'}}>
           <Button sx={{width:'auto', height:'100%', color:'black'}} component='label'><File />
         <input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
-        <Button style={{  width:'auto', height:'100%', color:'black' }} onClick={playMode}><Play /></Button>
+        <Button style={{  width:'auto', height:'100%', color:'black' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
         <Button  onClick={stop} style={{ width:'auto', height:'100%', color:'black'}} ><Stop /></Button>
         </div>
 
@@ -320,8 +311,8 @@ function App() {
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
           }}
           value={volume}
-          min={0}
-          max={100}
+          min={-35}
+          max={0}
           onChange={volumeSlider}
           defaultValue={100} getAriaLabel={() => 'Default'}
           valueLabelDisplay='off' valueLabelFormat={position}/>
