@@ -247,7 +247,8 @@ function App() {
     <Box className='shell center' sx={styles}>
 
       <div style={{background: light ? 'linear-gradient(135deg, #00dbf6, #00dbf6)' : 'linear-gradient(135deg, #D6D5D0, #A5A59B)'}} className='time-display screen'>
-        <p style={{ fontSize: '.5em' }} className='display-text pixel'>{fileName}</p>
+        <div className='marquee'><p style={{ overflow:'hidden', fontSize: '.5em', whiteSpace:'nowrap', textAlign:'center',
+         marginLeft:'10px', marginRight:'10px'}} className='display-text pixel'>{fileName}</p></div>
         <p style={{ fontSize: '1.2em', position: 'absolute', left: '45px', top:'15px' }} className='display-text pixel'>{position}</p>
         
 
@@ -283,15 +284,12 @@ function App() {
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
         <Button
-          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left: '72px', top: '47.5%', transform: 'scale(.7)' }}
+          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left: '72px', top: '46.5%', transform: 'scale(.7)' }}
           onClick={playLoop}><Loop />
         </Button>
 
-        {loop ? <div style={{ position: 'relative', top: '25%', display: 'flex', justifyContent: 'space-around' }}>
+        {loop ? <div style={{ position: 'relative', top: '35%', display: 'flex', justifyContent: 'space-around' }}>
           <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
-
-
-
           <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[1])}</p>
         </div> : null}
 
