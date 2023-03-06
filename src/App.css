@@ -71,14 +71,6 @@
   transform: translate(-50%, -50%);
 } 
 
-  @media(max-width:768px) {
-    .center {
-      transform:scale(1) !important;
-      left:25% !important;
-      top:15% !important;
-    }
-  }
-
 .time-display {
     height:140px;
     margin: 1em;

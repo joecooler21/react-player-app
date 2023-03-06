@@ -247,7 +247,7 @@ function App() {
     <Box className='shell center' sx={styles}>
 
       <div style={{background: light ? 'linear-gradient(135deg, #00dbf6, #00dbf6)' : 'linear-gradient(135deg, #D6D5D0, #A5A59B)'}} className='time-display screen'>
-        <div className='marquee'><p style={{ overflow:'hidden', fontSize: '.5em', whiteSpace:'nowrap', textAlign:'center',
+        <div className={sound ? 'marquee' : ''}><p style={{ overflow:'hidden', fontSize: '.5em', whiteSpace:'nowrap', textAlign:'center',
          marginLeft:'10px', marginRight:'10px'}} className='display-text pixel'>{fileName}</p></div>
         <p style={{ fontSize: '1.2em', position: 'absolute', left: '45px', top:'15px' }} className='display-text pixel'>{position}</p>
         
