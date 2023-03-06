@@ -283,11 +283,11 @@ function App() {
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
         <Button
-          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left: '72px', top: '97px', transform: 'scale(.7)' }}
+          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left: '72px', top: '47.5%', transform: 'scale(.7)' }}
           onClick={playLoop}><Loop />
         </Button>
 
-        {loop ? <div style={{ position: 'relative', top: '50px', display: 'flex', justifyContent: 'space-around' }}>
+        {loop ? <div style={{ position: 'relative', top: '25%', display: 'flex', justifyContent: 'space-around' }}>
           <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
 
 
