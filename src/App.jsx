@@ -164,14 +164,7 @@ function App() {
 
   }
 
-  const styles = {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    width: '250px',
-    height: '350px',
-    padding: '0 0 2em 0',
-    borderRadius: '10px',
-  }
+  
 
   const stop = () => {
     sound.stop()
@@ -242,19 +235,25 @@ function App() {
     
   }
 
+  const styles = {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: '0 0 2em 0',
+  }
+
 
   return (
     <Box className='shell center' sx={styles}>
 
       <div style={{background: light ? 'linear-gradient(135deg, #00dbf6, #00dbf6)' : 'linear-gradient(135deg, #D6D5D0, #A5A59B)'}} className='time-display screen'>
-        <div className={sound ? 'marquee' : ''}><p style={{ overflow:'hidden', fontSize: '.5em', whiteSpace:'nowrap', textAlign:'center',
+        <div className={sound ? 'marquee' : ''}><p style={{ overflow:'hidden', fontSize: '.9em', whiteSpace:'nowrap', textAlign:'center',
          marginLeft:'10px', marginRight:'10px'}} className='display-text pixel'>{fileName}</p></div>
-        <p style={{ fontSize: '1.2em', position: 'absolute', left: '45px', top:'15px' }} className='display-text pixel'>{position}</p>
+        <p style={{ fontSize: '2em', position: 'absolute', top:'10%'}} className='display-text pixel centered'>{position}</p>
         
 
         <Slider
           sx={{
-            color: 'lightgrey', height: '.1em', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.25em', color: 'black', height: '.5em', margin:'0px' },
+            color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em', color: 'black', height: '.5em', margin:'0px' },
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' },
             '& .MuiSlider-rail': { color: 'black' }, '& .MuiSlider-track': { color: 'black' }
           }}
@@ -262,7 +261,7 @@ function App() {
           min={0}
           max={duration}
           onChange={seek}
-          style={{ width: '70%', padding: '0em', position: 'absolute', left: '30px', top: '80px' }}
+          style={{ position:'absolute', width: '70%', height:'10%', padding: '0em', top:'25%' }}
           defaultValue={0} getAriaLabel={() => 'Default'}
           valueLabelDisplay='off' valueLabelFormat={position} />
 
@@ -271,11 +270,11 @@ function App() {
           onChange={setLoopRange}
           value={rangeValue}
           sx={{
-            visibility: loop ? 'visible' : 'hidden', color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', height: '.5em', width: '.2em', color: 'black'},
-            '& .MuiSlider-rail': { backgroundColor: 'transparent', width: '.2em' }, '& .MuiSlider-track': { color: 'black', width: '.2em' },
+            visibility: loop ? 'visible' : 'hidden', color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', height: '.5em', width: '.5em', color: 'black'},
+            '& .MuiSlider-rail': { backgroundColor: 'transparent' }, '& .MuiSlider-track': { color: 'black'},
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', top: '3.5em', fontStyle: 'italic' }
           }}
-          style={{ position:'absolute', height: '.01em', width: '70%', padding: '0em', top: '100px', left:'30px' }}
+          style={{ position:'relative',width: '70%', padding: '0em', top: '28%' }}
           min={0}
           defaultValue={rangeValue}
           max={duration}
@@ -284,13 +283,13 @@ function App() {
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
         <Button
-          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left: '72px', top: '46.5%', transform: 'scale(.7)' }}
-          onClick={playLoop}><Loop />
+          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left:'43%', top: '40%' }}
+          onClick={playLoop}><Loop sx={{fontSize:'2.5em'}} />
         </Button>
 
-        {loop ? <div style={{ position: 'relative', top: '35%', display: 'flex', justifyContent: 'space-around' }}>
-          <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
-          <p style={{ fontSize: '.5em' }} className='display-text pixel'>{formatTime(rangeValue[1])}</p>
+        {loop ? <div style={{ position: 'relative', top: '27%', display: 'flex', justifyContent: 'space-around' }}>
+          <p style={{ fontSize: '1em' }} className='display-text pixel'>{formatTime(rangeValue[0])}</p>
+          <p style={{ fontSize: '1em' }} className='display-text pixel'>{formatTime(rangeValue[1])}</p>
         </div> : null}
 
       </div>
@@ -299,22 +298,23 @@ function App() {
 
       <div>
           {/* play controls */}
-        <div style={{width:'100%', height:'30px', display:'flex', justifyContent:'center', position:'absolute', left:'0px', top:'150px'}}>
-          <Button sx={{width:'auto', height:'100%', color:'black'}} component='label'><File />
+        <div style={{width:'100%', height:'30px', display:'flex', justifyContent:'center', position:'absolute', left:'0px', top:'55%'}}>
+          <Button sx={{width:'auto', height:'100%', color:'black'}} component='label'><File sx={{fontSize:'4em'}} />
         <input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
-        <Button style={{  width:'auto', height:'100%', color:'black' }} onClick={playMode}>{play ? <Pause /> : <Play />}</Button>
-        <Button  onClick={stop} style={{ width:'auto', height:'100%', color:'black'}} ><Stop /></Button>
+        <Button style={{  width:'auto', height:'auto', color:'black' }} onClick={playMode}>{play ? <Pause sx={{fontSize:'5em'}} /> : 
+        <Play sx={{fontSize:'5em'}} />}</Button>
+        <Button  onClick={stop} style={{ width:'auto', height:'auto', color:'black'}} ><Stop sx={{fontSize:'5em'}} /></Button>
         </div>
 
         {/* volume controls */}
-        <div style={{width:'175px', height:'30px', position:'absolute', left:'40px', bottom:'85px', display:'flex',
+        <div style={{width:'300px', height:'30px', position:'absolute', left:'20%', bottom:'25%', display:'flex',
          flexDirection:'row', justifyContent:'space-around'}}>
 
-          <VolumeDown sx={{position:'relative',bottom:'-2px',transform:'scale(.7)'}} />
+          <VolumeDown sx={{position:'relative',bottom:'-2px'}} />
 
         <Slider
-          sx={{borderRadius:'0px', width:'100px', height:'1px', position:'relative', bottom:'0px',
-            color: 'black', '& .MuiSlider-thumb': { borderRadius: '1px', width:'5px', height:'10px' },
+          sx={{borderRadius:'0px', width:'200px', position:'relative', bottom:'0px',
+            color: 'black', '& .MuiSlider-thumb': { borderRadius: '1px', width:'10px', height:'10px' },
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
           }}
           value={volume}
@@ -324,18 +324,18 @@ function App() {
           defaultValue={100} getAriaLabel={() => 'Default'}
           valueLabelDisplay='off' valueLabelFormat={position}/>
 
-          <VolumeUp sx={{position:'relative', bottom:'0px', transform:'scale(.7)'}} />
+          <VolumeUp sx={{position:'relative', bottom:'-2px'}} />
 
           </div>
           
           { /* speed controls */}
-          <div style={{width:'150px', display:'flex', justifyContent:'center', position:'absolute', bottom:'70px', left:'50px'}}>
-          <p style={{ fontSize: '.5em', marginRight:'5px'}}
+          <div style={{ width:'300px', display:'flex', justifyContent:'space-between', position:'absolute', bottom:'15%', left:'20%'}}>
+          <p style={{ fontSize: '1em'}}
           className='display-text pixel'>Speed: {playbackSpeed}</p>
         <Slider
-          sx={{borderRadius:'0px', '& .MuiSlider-mark':{backgroundColor:'transparent'},
-            '& .MuiSlider-thumb': { borderRadius: '1px', width: '5px', height:'10px', color:'black' },
-            width: '50px', height:'1px', color:'black'
+          sx={{width:'150px', borderRadius:'0px', '& .MuiSlider-mark':{backgroundColor:'transparent'},
+            '& .MuiSlider-thumb': { borderRadius: '1px', width: '10px', height:'10px', color:'black' },
+            color:'black', position:'absolute', bottom:'20%', right:'0%', marginRight:'17%'
           }}
           aria-label="Custom marks"
           defaultValue={1.0}
@@ -346,9 +346,9 @@ function App() {
           marks={marks}
           onChangeCommitted={changePlaybackSpeedComitted}
           onChange={changePlaybackSpeed}
-        />
-        </div>
-        <button onClick={toggleLight} className='center-button'><Light sx={{transform:'scale(90%)', position:'relative', left:'-10%', bottom:'-5%'}} /></button>
+        /></div>
+
+        <button onClick={toggleLight} className='center-button'><Light sx={{ transform:'scale(75%)', position:'absolute', left:'-1px', top:'-1px' }} /></button>
       </div>
     </Box>
   )

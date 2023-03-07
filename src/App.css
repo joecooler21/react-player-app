@@ -26,8 +26,8 @@
 	.screen {
     position: relative;
     margin: 30px auto 0px auto;
-    width: 210px !important;
-    height: 210px !important;
+    width: 460px !important;
+    height: 460px !important;
     background: linear-gradient(135deg, #00dbf6, #00dbf6);
     border-radius: 10px;
     box-shadow: inset 0px 0px 10px 2px var(--very-dark-grey);
@@ -38,10 +38,10 @@
 
   .center-button {
     position: absolute;
-    bottom: 5%;
-    left:42.5%;
-    height: 35px;
-    width: 35px;
+    bottom: 2.5%;
+    left:47%;
+    height: 25px;
+    width: 25px;
     border: 2px solid var(--icon-light-grey);
     border-radius: 50%;
     background-color: #CBCCCE;
@@ -88,15 +88,14 @@
 .display-text {
     color:black;
     font-family: 'roboto';
-    font-size:.9em;
     font-weight:bolder;
 }
 
 .shell {
-	width: 255px !important;
-	height: 265px !important;
+	width: 505px;
+	height: 500px;
 	border: 1px solid transparent;
-	border-radius: 38px;
+	border-radius: 38px !important;
 	background: linear-gradient(45deg, var(--light-background), var(--dark-background));
 	box-shadow: inset 5px -5px 15px 0px grey;
 }
