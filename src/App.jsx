@@ -14,6 +14,7 @@ import { default as Stop } from '@mui/icons-material/Stop'
 import { default as Loop } from '@mui/icons-material/Loop'
 import { default as VolumeUp } from '@mui/icons-material/VolumeUp'
 import { default as VolumeDown } from '@mui/icons-material/VolumeDown'
+import { default as VolumeOff } from '@mui/icons-material/VolumeOff';
 import { default as Light } from '@mui/icons-material/LightMode'
 
 // valid playback rates and pitch correction values
@@ -40,7 +41,9 @@ function App() {
   const [timer, setTimer] = useState(null)
   const [seconds, setSeconds] = useState(0)
   const [volume, setVolume] = useState(100)
+  const [prevVolume, setPrevVolume] = useState(0)
   const [light, setLight] = useState(false)
+  const [mute, setMute] = useState(false)
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
@@ -74,6 +77,7 @@ function App() {
     setVolume(e.target.value)
     if (!sound) return
     sound.volume.value = (e.target.value)
+    setMute(false)
 
   }
 
@@ -164,7 +168,7 @@ function App() {
 
   }
 
-  
+
 
   const stop = () => {
     sound.stop()
@@ -220,19 +224,19 @@ function App() {
   }
 
   const changePlaybackSpeedComitted = (e) => {
-    
+
     if (!sound) return
-      let pc = getpc(playbackSpeed)
-      sound.playbackRate = playbackSpeed
-      let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
-      sound.disconnect()
-      sound.connect(pitch_shift)
-    
+    let pc = getpc(playbackSpeed)
+    sound.playbackRate = playbackSpeed
+    let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
+    sound.disconnect()
+    sound.connect(pitch_shift)
+
   }
 
   const toggleLight = () => {
     light ? setLight(false) : setLight(true)
-    
+
   }
 
   const styles = {
@@ -241,19 +245,43 @@ function App() {
     padding: '0 0 2em 0',
   }
 
+  const clickMute = () => {
+    if (!sound) return
+    if (!mute) {
+      sound.mute = true
+      setPrevVolume(volume)
+      setVolume(-35)
+    }
+    if (mute) {
+      sound.mute = false
+      setVolume(prevVolume)
+    }
+    mute ? setMute(false) : setMute(true)
+  }
+
+  const clickVolUp = () => {
+    if (!sound) return
+    sound.mute = false
+    setMute(false)
+    setVolume(0)
+  }
+
+
 
   return (
     <Box className='shell center' sx={styles}>
 
-      <div style={{background: light ? 'linear-gradient(135deg, #00dbf6, #00dbf6)' : 'linear-gradient(135deg, #D6D5D0, #A5A59B)'}} className='time-display screen'>
-        <div className={sound ? 'marquee' : ''}><p style={{ overflow:'hidden', fontSize: '.9em', whiteSpace:'nowrap', textAlign:'center',
-         marginLeft:'10px', marginRight:'10px'}} className='display-text pixel'>{fileName}</p></div>
-        <p style={{ fontSize: '2em', position: 'absolute', top:'10%'}} className='display-text pixel centered'>{position}</p>
-        
+      <div style={{ background: light ? 'linear-gradient(135deg, #00dbf6, #00dbf6)' : 'linear-gradient(135deg, #D6D5D0, #A5A59B)' }} className='time-display screen'>
+        <div className={sound ? 'marquee' : ''}><p style={{
+          overflow: 'hidden', fontSize: '.9em', whiteSpace: 'nowrap', textAlign: 'center',
+          marginLeft: '10px', marginRight: '10px'
+        }} className='display-text pixel'>{fileName}</p></div>
+        <p style={{ fontSize: '2em', position: 'absolute', top: '10%' }} className='display-text pixel centered'>{position}</p>
+
 
         <Slider
           sx={{
-            color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em', color: 'black', height: '.5em', margin:'0px' },
+            color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', width: '.5em', color: 'black', height: '.5em', margin: '0px' },
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' },
             '& .MuiSlider-rail': { color: 'black' }, '& .MuiSlider-track': { color: 'black' }
           }}
@@ -261,20 +289,20 @@ function App() {
           min={0}
           max={duration}
           onChange={seek}
-          style={{ position:'absolute', width: '70%', height:'10%', padding: '0em', top:'25%' }}
+          style={{ position: 'absolute', width: '70%', height: '10%', padding: '0em', top: '25%' }}
           defaultValue={0} getAriaLabel={() => 'Default'}
           valueLabelDisplay='off' valueLabelFormat={position} />
 
-          { /* loop controls */}
+        { /* loop controls */}
         <Slider
           onChange={setLoopRange}
           value={rangeValue}
           sx={{
-            visibility: loop ? 'visible' : 'hidden', color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', height: '.5em', width: '.5em', color: 'black'},
-            '& .MuiSlider-rail': { backgroundColor: 'transparent' }, '& .MuiSlider-track': { color: 'black'},
+            visibility: loop ? 'visible' : 'hidden', color: 'lightgrey', '& .MuiSlider-thumb': { borderRadius: '1px', height: '.5em', width: '.5em', color: 'black' },
+            '& .MuiSlider-rail': { backgroundColor: 'transparent' }, '& .MuiSlider-track': { color: 'black' },
             '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', top: '3.5em', fontStyle: 'italic' }
           }}
-          style={{ position:'relative',width: '70%', padding: '0em', top: '28%' }}
+          style={{ position: 'relative', width: '70%', padding: '0em', top: '28%' }}
           min={0}
           defaultValue={rangeValue}
           max={duration}
@@ -282,9 +310,9 @@ function App() {
           valueLabelDisplay='off'
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
-        <Button 
-          style={{zIndex:'1',  position: 'absolute', left:'43%', top: '40%' }}
-          onClick={playLoop}><Loop className={loop ? 'rotate' : ''} sx={{fontSize:'2.5em', color: 'black'}} />
+        <Button
+          style={{ zIndex: '1', position: 'absolute', left: '43%', top: '40%' }}
+          onClick={playLoop}><Loop className={loop ? 'rotate' : ''} sx={{ fontSize: '2.5em', color: 'black' }} />
         </Button>
 
         {loop ? <div style={{ position: 'relative', top: '27%', display: 'flex', justifyContent: 'space-around' }}>
@@ -297,58 +325,62 @@ function App() {
       </div>
 
       <div>
-          {/* play controls */}
-        <div style={{width:'100%', height:'30px', display:'flex', justifyContent:'center', position:'absolute', left:'0px', top:'55%'}}>
-          <Button sx={{width:'auto', height:'100%', color:'black'}} component='label'><File sx={{fontSize:'4em'}} />
-        <input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
-        <Button style={{  width:'auto', height:'auto', color:'black' }} onClick={playMode}>{play ? <Pause sx={{fontSize:'5em'}} /> : 
-        <Play sx={{fontSize:'5em'}} />}</Button>
-        <Button  onClick={stop} style={{ width:'auto', height:'auto', color:'black'}} ><Stop sx={{fontSize:'5em'}} /></Button>
+        {/* play controls */}
+        <div style={{ width: '100%', height: '30px', display: 'flex', justifyContent: 'center', position: 'absolute', left: '0px', top: '50%' }}>
+          <Button sx={{ width: 'fit-content', height: 'fit-content', color: 'black', position: 'relative', top: '20%' }} component='label'><File sx={{ fontSize: '4em' }} />
+            <input onChange={fileSelect} type='file' hidden accept='.mp3, .wav, .ogg, .aac, .m4a' /></Button>
+          <Button style={{ width: 'fit-content', height: 'fit-content', color: 'black' }} onClick={playMode}>{play ? <Pause sx={{ fontSize: '5em' }} /> :
+            <Play sx={{ fontSize: '5em' }} />}</Button>
+          <Button onClick={stop} style={{ width: 'fit-content', height: 'fit-content', color: 'black' }} ><Stop sx={{ fontSize: '5em' }} /></Button>
         </div>
 
         {/* volume controls */}
-        <div style={{width:'300px', height:'30px', position:'absolute', left:'20%', bottom:'25%', display:'flex',
-         flexDirection:'row', justifyContent:'space-around'}}>
+        <div style={{
+          width: '300px', height: '30px', position: 'absolute', left: '20%', bottom: '25%', display: 'flex',
+          flexDirection: 'row', justifyContent: 'space-around'
+        }}>
 
-          <VolumeDown sx={{position:'relative',bottom:'-2px'}} />
+          {mute ? <VolumeOff onClick={clickMute} className='volume-icon' sx={{ position: 'relative', bottom: '-2px' }} /> : <VolumeDown onClick={clickMute} className='volume-icon' sx={{ position: 'relative', bottom: '-2px' }} />}
 
-        <Slider
-          sx={{borderRadius:'0px', width:'200px', position:'relative', bottom:'0px',
-            color: 'black', '& .MuiSlider-thumb': { borderRadius: '1px', width:'10px', height:'10px' },
-            '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
-          }}
-          value={volume}
-          min={-35}
-          max={0}
-          onChange={volumeSlider}
-          defaultValue={100} getAriaLabel={() => 'Default'}
-          valueLabelDisplay='off' valueLabelFormat={position}/>
+          <Slider
+            sx={{
+              borderRadius: '0px', width: '200px', position: 'relative', bottom: '0px',
+              color: 'black', '& .MuiSlider-thumb': { borderRadius: '1px', width: '10px', height: '10px' },
+              '& .MuiSlider-valueLabel': { backgroundColor: 'transparent', color: 'lightgrey', fontStyle: 'italic' }
+            }}
+            value={volume}
+            min={-35}
+            max={0}
+            onChange={volumeSlider}
+            defaultValue={100} getAriaLabel={() => 'Default'}
+            valueLabelDisplay='off' valueLabelFormat={position} />
 
-          <VolumeUp sx={{position:'relative', bottom:'-2px'}} />
+          <VolumeUp onClick={clickVolUp} className='volume-icon' sx={{ position: 'relative', bottom: '-2px' }} />
 
-          </div>
-          
-          { /* speed controls */}
-          <div style={{ width:'300px', display:'flex', justifyContent:'space-between', position:'absolute', bottom:'15%', left:'20%'}}>
-          <p style={{ fontSize: '1em'}}
-          className='display-text pixel'>Speed: {`${Math.round(playbackSpeed * 100)}%`}</p>
-        <Slider
-          sx={{width:'135px', borderRadius:'0px', '& .MuiSlider-mark':{backgroundColor:'transparent'},
-            '& .MuiSlider-thumb': { borderRadius: '1px', width: '10px', height:'10px', color:'black' },
-            color:'black', position:'absolute', bottom:'20%', right:'0%', marginRight:'17%'
-          }}
-          aria-label="Custom marks"
-          defaultValue={1.0}
-          step={0.05}
-          max={1.0}
-          min={.5}
-          valueLabelDisplay="off"
-          marks={marks}
-          onChangeCommitted={changePlaybackSpeedComitted}
-          onChange={changePlaybackSpeed}
-        /></div>
+        </div>
 
-        <button onClick={toggleLight} className='center-button'><Light sx={{ transform:'scale(75%)', position:'absolute', left:'-1px', top:'-1px' }} /></button>
+        { /* speed controls */}
+        <div style={{ width: '300px', display: 'flex', justifyContent: 'space-between', position: 'absolute', bottom: '15%', left: '20%' }}>
+          <p style={{ fontSize: '1em' }}
+            className='display-text pixel'>Speed: {`${Math.round(playbackSpeed * 100)}%`}</p>
+          <Slider
+            sx={{
+              width: '135px', borderRadius: '0px', '& .MuiSlider-mark': { backgroundColor: 'transparent' },
+              '& .MuiSlider-thumb': { borderRadius: '1px', width: '10px', height: '10px', color: 'black' },
+              color: 'black', position: 'absolute', bottom: '20%', right: '0%', marginRight: '17%'
+            }}
+            aria-label="Custom marks"
+            defaultValue={1.0}
+            step={0.05}
+            max={1.0}
+            min={.5}
+            valueLabelDisplay="off"
+            marks={marks}
+            onChangeCommitted={changePlaybackSpeedComitted}
+            onChange={changePlaybackSpeed}
+          /></div>
+
+        <button onClick={toggleLight} className='center-button'><Light sx={{ transform: 'scale(75%)', position: 'absolute', left: '-1px', top: '-1px' }} /></button>
       </div>
     </Box>
   )
