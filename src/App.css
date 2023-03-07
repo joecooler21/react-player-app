@@ -92,7 +92,7 @@
 }
 
 .shell {
-	width: 505px;
+	width: 504px;
 	height: 500px;
 	border: 1px solid transparent;
 	border-radius: 38px !important;
@@ -137,6 +137,19 @@ body {
   top:5%;
   background: transparent;
   color: #333;
+}
+
+.rotate {
+  animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform:rotate(0deg)
+  } to {
+    transform:rotate(360deg)
+  }
+  
 }
 
 .marquee p {

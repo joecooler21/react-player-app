@@ -282,9 +282,9 @@ function App() {
           valueLabelDisplay='off'
           valueLabelFormat={(text, index) => { return formatTime(text) }}
         />
-        <Button
-          style={{zIndex:'1', color: loop ? 'black' : 'darkgrey', position: 'absolute', left:'43%', top: '40%' }}
-          onClick={playLoop}><Loop sx={{fontSize:'2.5em'}} />
+        <Button 
+          style={{zIndex:'1',  position: 'absolute', left:'43%', top: '40%' }}
+          onClick={playLoop}><Loop className={loop ? 'rotate' : ''} sx={{fontSize:'2.5em', color: 'black'}} />
         </Button>
 
         {loop ? <div style={{ position: 'relative', top: '27%', display: 'flex', justifyContent: 'space-around' }}>
