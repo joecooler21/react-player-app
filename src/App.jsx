@@ -331,9 +331,9 @@ function App() {
           { /* speed controls */}
           <div style={{ width:'300px', display:'flex', justifyContent:'space-between', position:'absolute', bottom:'15%', left:'20%'}}>
           <p style={{ fontSize: '1em'}}
-          className='display-text pixel'>Speed: {playbackSpeed}</p>
+          className='display-text pixel'>Speed: {`${Math.round(playbackSpeed * 100)}%`}</p>
         <Slider
-          sx={{width:'150px', borderRadius:'0px', '& .MuiSlider-mark':{backgroundColor:'transparent'},
+          sx={{width:'135px', borderRadius:'0px', '& .MuiSlider-mark':{backgroundColor:'transparent'},
             '& .MuiSlider-thumb': { borderRadius: '1px', width: '10px', height:'10px', color:'black' },
             color:'black', position:'absolute', bottom:'20%', right:'0%', marginRight:'17%'
           }}
