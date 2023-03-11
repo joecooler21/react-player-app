@@ -3,19 +3,35 @@ import { Slider } from '@mui/material'
 
 import { Transport } from 'tone'
 
-const Seek = ({ sound, setSingleValue, setPosition, position, singleValue, duration, formatTime }) => {
+const Seek = ({ sound, setSingleValue, setPosition, position,
+     singleValue, duration, formatTime, globalTimer, setGlobalTimer, setSeconds }) => {
 
     const seek = (e, newVal) => {
         if (!sound) return
-        sound.seek(e.target.value, '+0')
-        setSingleValue(newVal)
-        Transport.seconds = newVal
-        setPosition(formatTime(newVal / sound.playbackRate))
+        
+        setSingleValue(e.target.value)
+        setPosition(formatTime(e.target.value))
+       
+      }
+
+      const seekCommitted = () => {
+        
+        setGlobalTimer(Transport.scheduleRepeat(()=>{
+            setSeconds(Math.round(Transport.seconds))
+
+        }, '1s'))
+
+        sound.seek(singleValue, '+0')
+        Transport.seconds = singleValue
+        
+        
+
       }
 
     return (
         <div>
-            <p style={{ fontSize: '2em', position: 'absolute', top: '10%' }} className='display-text pixel centered'>{position}</p>
+            <p style={{ fontSize: '2em', position: 'absolute', top: '10%' }}
+             className='display-text pixel centered'>{position}</p>
 
 
             <Slider
@@ -28,6 +44,7 @@ const Seek = ({ sound, setSingleValue, setPosition, position, singleValue, durat
                 min={0}
                 max={duration}
                 onChange={seek}
+                onChangeCommitted={seekCommitted}
                 style={{ position: 'absolute', width: '70%', height: '10%', padding: '0em', top: '25%', left: '15%' }}
                 defaultValue={0} getAriaLabel={() => 'Default'}
                 valueLabelDisplay='off' valueLabelFormat={position} />

@@ -1,17 +1,18 @@
 import React from 'react'
 import { Button, Slider } from '@mui/material'
 import { default as LoopIcon } from '@mui/icons-material/Loop'
-import { Transport } from 'tone'
+import { Transport, Time } from 'tone'
 
-const Loop = ({ sound, loop, setLoop, rangeValue, setRangeValue, formatTime, duration, setSeconds }) => {
+const Loop = ({ sound, loop, setLoop, rangeValue, setRangeValue, formatTime, duration, setSeconds, globalTimer, setGlobalTimer, playbackSpeed }) => {
 
     const playLoop = () => {
         if (!sound) return
         if (!loop) {
             sound.loop = true
-            Transport.scheduleRepeat(() => {
+            Transport.clear(globalTimer)
+            setGlobalTimer(Transport.scheduleRepeat(() => {
                 setSeconds(Math.round(Transport.seconds))
-            }, '1s')
+            }, '1s'))
 
         } else {
             sound.loop = false

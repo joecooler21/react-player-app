@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Transport } from 'tone'
+import { Transport, Time } from 'tone'
 import { Box } from '@mui/material'
 import Marquee from './components/Marquee.jsx'
 import Volume from './components/Volume.jsx'
@@ -34,6 +34,7 @@ function App() {
   const [position, setPosition] = useState('00:00:00')
   const [seconds, setSeconds] = useState(0)
   const [light, setLight] = useState(false)
+  const [globalTimer, setGlobalTimer] = useState(null)
 
   const getpc = (pbr) => { // get proper pitch correction for the specified playback rate
 
@@ -90,11 +91,22 @@ function App() {
 
   useEffect(() => {
     if (!sound) return
-    Transport.scheduleRepeat(() => {
+    
+    Transport.clear(globalTimer)
+    setGlobalTimer(Transport.scheduleRepeat(() => {
       setSeconds(Math.round(Transport.seconds))
-    }, '1s')
+    }, '1s'))
 
   }, [playbackSpeed])
+
+  useEffect(() => {
+    if (!sound) return
+    if (singleValue >= duration) {
+      setPlay(false)
+      sound.stop()
+      Transport.stop()
+    }
+  }, [singleValue])
 
   const styles = {
     flexDirection: 'column',
@@ -110,18 +122,20 @@ function App() {
         <Marquee sound={sound} fileName={fileName} />
 
         <Seek sound={sound} setSingleValue={setSingleValue} setPosition={setPosition} position={position}
-         singleValue={singleValue} duration={duration} formatTime={formatTime} />
+         singleValue={singleValue} duration={duration} formatTime={formatTime} globalTimer={globalTimer}
+         setGlobalTimer={setGlobalTimer} setSeconds={setSeconds} />
       
         <Loop sound={sound} loop={loop} setLoop={setLoop} rangeValue={rangeValue}
          setRangeValue={setRangeValue} formatTime={formatTime} duration={duration} setSeconds={setSeconds}
-         singleValue={singleValue} setPosition={setPosition}  />
+         singleValue={singleValue} setPosition={setPosition} setGlobalTimer={setGlobalTimer} globalTimer={globalTimer}
+         playbackSpeed={playbackSpeed} />
 
       </div>
 
      
-        <LoadPlayStop sound={sound} setFileName={setFileName} setSound={setSound} setDuration={setDuration} setRangeValue={setRangeValue}
+        <LoadPlayStop sound={sound} setFileName={setFileName} setSound={setSound} duration={duration} setDuration={setDuration} setRangeValue={setRangeValue}
      play={play} playbackSpeed={playbackSpeed} getpc={getpc} setSeconds={setSeconds} setPlay={setPlay} setSingleValue={setSingleValue}
-      setLoop={setLoop} formatTime={formatTime} setPosition={setPosition} singleValue={singleValue} />
+      setLoop={setLoop} formatTime={formatTime} setPosition={setPosition} singleValue={singleValue} globalTimer={globalTimer} setGlobalTimer={setGlobalTimer} />
 
         <Volume sound={sound} position={position}/>
 

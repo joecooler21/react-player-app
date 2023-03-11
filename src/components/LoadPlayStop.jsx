@@ -6,11 +6,12 @@ import { default as Pause } from '@mui/icons-material/Pause'
 import { default as File } from '@mui/icons-material/AudioFile'
 import { default as Stop } from '@mui/icons-material/Stop'
 
-import { Player, PitchShift, Buffer, Transport } from 'tone'
+import { Player, PitchShift, Buffer, Transport, Time } from 'tone'
 
 
 const LoadPlayStop = ({ sound, setFileName, setSound, duration, setDuration, setRangeValue,
-  play, playbackSpeed, getpc, setSeconds, setPlay, singleValue, setSingleValue, setLoop, setPosition, formatTime }) => {
+  play, playbackSpeed, getpc, setSeconds, setPlay, singleValue, setSingleValue, setLoop,
+  setPosition, formatTime, globalTimer, setGlobalTimer }) => {
 
   const fileSelect = (e) => {
     setFileName(e.target.files[0].name)
@@ -37,17 +38,24 @@ const LoadPlayStop = ({ sound, setFileName, setSound, duration, setDuration, set
       // pitch correction
       let pc = getpc(playback_rate)
       let pitch_shift = new PitchShift({ pitch: pc }).toDestination()
-      sound.disconnect();
+      sound.disconnect()
 
       sound.connect(pitch_shift);
+      if (singleValue >= duration) {
+        sound.seek(0, '+0')
+        Transport.start()
+        sound.start()
+      } else {
+        Transport.start()
+        sound.start()
+        sound.seek(singleValue, '+0')
+      }
 
-      sound.start()
-      sound.seek(singleValue, '+0')
-      Transport.start()
-      Transport.scheduleRepeat(() => {
+      Transport.clear(globalTimer)
+      setGlobalTimer(Transport.scheduleRepeat(() => {
         setSeconds(Math.round(Transport.seconds))
 
-      }, '1s')
+      }, '1s'))
 
     }
     if (play) {
